@@ -122,10 +122,10 @@ Security is deeply embedded in every layer:
 ## 👨‍💻 Contributors
 
 **Team Name:** Heisyn  
-- [Sanskar Dubey]  
-- [Shiva Pandey]  
-- [Shreshth Srivastava]  
-- [Devendra Singh]  
+- [Sanskar Dubey](https://github.com/dubeysanskary)  
+- [Shiva Pandey](https://github.com/shivastoic)  
+- [Shreshth Srivastava](https://github.com/root4shreshth )  
+- [Devendra Singh](https://github.com/dev7083)  
 
 ---
 
