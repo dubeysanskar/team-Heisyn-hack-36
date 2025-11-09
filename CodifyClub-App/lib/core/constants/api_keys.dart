@@ -1,0 +1,2 @@
+final geminiApiKey='AIzaSyCUiGumb94Gk3THscY6OhAo702uvy_XsXw';
+final rezorPayApiKey='rzp_test_jQtlgwzlZxTVOG';
