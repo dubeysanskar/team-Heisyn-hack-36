@@ -1,0 +1,1709 @@
+{
+  "name": "Astro",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8",
+          "mode": "list",
+          "cachedResultName": "Astrology",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kLfeRAtB_54VQk5GIsyyebIumKJwHAE5XGtmKWkJqzM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "called": "Yes",
+            "email id ": "={{ $('Loop Over Items').item.json.email }}",
+            "dob": "={{ $('Loop Over Items').item.json.user_dob }}",
+            "next action": "={{ $('Loop Over Items').item.json.next_action }}",
+            "call summary": "={{ $('Loop Over Items').item.json.call_summary }}",
+            "interest status": "={{ $('Loop Over Items').item.json.user_interest_status }}",
+            "row_number": 0,
+            "phone no": "=",
+            "name ": "="
+          },
+          "matchingColumns": [
+            "email id "
+          ],
+          "schema": [
+            {
+              "id": "name ",
+              "displayName": "name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone no",
+              "displayName": "phone no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email id ",
+              "displayName": "email id ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "dob",
+              "displayName": "dob",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "next action",
+              "displayName": "next action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "call summary",
+              "displayName": "call summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "interest status",
+              "displayName": "interest status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "called",
+              "displayName": "called",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        976
+      ],
+      "id": "c07cf98c-b080-42ba-b067-7f25ab5ebd31",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pPX3arfpZqjrLmC2",
+          "name": "shreshth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node (JavaScript)\n * Extracts: name, email, number, user_dob, next_action, call_summary, user_interest_status\n */\n\nfunction safeParseJSON(input) {\n  if (!input) return null;\n  if (typeof input === 'object') return input;\n  try {\n    return JSON.parse(input);\n  } catch {\n    return null;\n  }\n}\n\nconst results = [];\n\nfor (const item of items) {\n  try {\n    let src = item.json ?? item;\n\n    // Handle array payload\n    if (Array.isArray(src) && src.length > 0) src = src[0];\n\n    // Parse string body if present\n    if (src && typeof src.body === 'string') {\n      const parsed = safeParseJSON(src.body);\n      if (parsed) src = parsed;\n    } else if (src && src.body && typeof src.body === 'object') {\n      src = src.body;\n    }\n\n    // Parse extracted_data\n    let extracted = safeParseJSON(src.extracted_data) ?? src.extracted_data ?? null;\n    if (typeof extracted === 'string') extracted = safeParseJSON(extracted);\n\n    // Helper: try multiple possible key names/locations\n    function pick(...keys) {\n      for (const k of keys) {\n        if (extracted && typeof extracted === 'object' && extracted[k] != null)\n          return extracted[k];\n        if (src && typeof src === 'object' && src[k] != null) return src[k];\n        if (src?.context_details?.recipient_data?.[k] != null)\n          return src.context_details.recipient_data[k];\n      }\n      return null;\n    }\n\n    // Extract main fields\n    const name = pick('name', 'Name', 'user_name', 'full_name');\n    const email = pick('email', 'Email', 'Email id', 'email_id', 'user_email');\n    const number = pick('number', 'Number', 'phone', 'phone_number', 'user_number', 'recipient_phone_number');\n\n    const userDob = pick('user_dob', 'dob', 'birth_date', 'date_of_birth', 'birthDate');\n    const nextAction = pick('next_action', 'nextAction', 'next_step', 'next_step_action');\n    const callSummary = pick('call_summary', 'summary', 'callSummary', 'call_summary_text');\n    let userInterest = pick(\n      'user_interest_status',\n      'user_interest',\n      'userInterestStatus',\n      'userInterest',\n      'user_interested_status',\n      'user_intrested_status'\n    );\n\n    // If user_interest_status missing, parse agent_extraction\n    if (!userInterest && src.agent_extraction) {\n      const ae = safeParseJSON(src.agent_extraction);\n      if (ae && typeof ae === 'object') {\n        for (const topKey of Object.keys(ae)) {\n          const obj = ae[topKey];\n          if (obj?.dispositions) {\n            const disp = Object.values(obj.dispositions).find(\n              v => v && v.toString().trim() !== ''\n            );\n            if (disp) {\n              userInterest = disp;\n              break;\n            }\n          }\n        }\n      }\n    }\n\n    // Infer interest from call summary if still not found\n    if (!userInterest && typeof callSummary === 'string') {\n      const s = callSummary.toLowerCase();\n      if (s.includes('not interested') || s.includes('declined'))\n        userInterest = 'Not Interested';\n      else if (s.includes('partially'))\n        userInterest = 'Partially Interested';\n      else if (s.includes('interested'))\n        userInterest = 'Interested';\n    }\n\n    // Final normalized output\n    results.push({\n      json: {\n        name: name || '',\n        email: email || '',\n        number: number || '',\n        user_dob: userDob || '',\n        next_action: nextAction || '',\n        call_summary: callSummary || '',\n        user_interest_status: userInterest || '',\n        user_intrested_status: userInterest || '' // compatibility alias\n      }\n    });\n  } catch (err) {\n    results.push({\n      json: {\n        name: '',\n        email: '',\n        number: '',\n        user_dob: '',\n        next_action: '',\n        call_summary: '',\n        user_interest_status: '',\n        user_intrested_status: '',\n        _error: err.message\n      }\n    });\n  }\n}\n\nreturn results;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        752
+      ],
+      "id": "41ddb16f-de7c-4f44-890b-54ed10f0a9bb",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.bolna.ai/executions/{{ $json.execution_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer bn-816de3da4921414c9cffb7e59fd8d483"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        928,
+        752
+      ],
+      "id": "d0131e92-cc97-4d3c-b583-9b7b18b86a3a",
+      "name": "Summary"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.bolna.ai/call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer bn-816de3da4921414c9cffb7e59fd8d483"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"agent_id\": \"b7c05eae-6462-4b84-9519-3eb4ae607af1\",\n  \"recipient_phone_number\": \"+91{{ $json['phone no'] }}\",\n  \"from_phone_number\": \"+918031273977\",\n  \"user_data\": {\n    \"Name\": \"{{ $json['name '] }}\",\n\"Email id\":\"{{ $json['email id '] }}\",\n    \"Requirement\": \"\",\n\"Number\": \"+91{{ $json['phone no'] }}\" \n\n    \n  }\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        624,
+        752
+      ],
+      "id": "90036e1c-324f-43b6-a7d3-9d681685adc3",
+      "name": "Calling Agent"
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        784,
+        752
+      ],
+      "id": "5868b00f-6a68-48e6-807c-330303bcd918",
+      "name": "Wait",
+      "webhookId": "3a20186a-7039-4656-a898-1b258465431e"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        432,
+        736
+      ],
+      "id": "372446e1-b7bd-45f2-bb0f-5aff56c49324",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3fc1b55c-a22f-4b9d-a5fe-90963b251e17",
+              "leftValue": "={{ $json.called }}",
+              "rightValue": "=\n",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        560
+      ],
+      "id": "b196a48f-6842-43b1-aea8-b32a32a11fa5",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (JavaScript) - dedupe by phone/email/rowNumber\nconst out = [];\nconst seen = new Set();\n\nfunction normalize(v) {\n  if (v === undefined || v === null) return null;\n  return String(v).trim().toLowerCase();\n}\n\nfor (const item of items) {\n  const phone = normalize(item.json.phone) || null;\n  const email = normalize(item.json.email) || null;\n  // try common row id keys\n  const rowId = normalize(item.json.rowNumber || item.json.rowIndex || item.json.row || item.json.Range) || null;\n\n  const key = phone || email || rowId;\n  if (!key) {\n    // include items without any identifier (rare)\n    out.push(item);\n    continue;\n  }\n\n  if (!seen.has(key)) {\n    seen.add(key);\n    out.push(item);\n  }\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        544
+      ],
+      "id": "987c7afd-0e6e-43c3-876c-1f73b8159b34",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8",
+          "mode": "list",
+          "cachedResultName": "Astrology",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        400,
+        560
+      ],
+      "id": "c1c33ee5-1648-4097-aa35-3ef4e9d44607",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "rT5CuclEaEhDlLdc",
+          "name": "shreshth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 21
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        1408
+      ],
+      "id": "89bd3498-fa54-44e3-88c9-8b453d67819b",
+      "name": "Schedule Trigger1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": ""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        1408
+      ],
+      "id": "e633c112-70c7-4ee4-aa50-7fa1c1223ecf",
+      "name": "AI Agent1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        608,
+        1680
+      ],
+      "id": "f3b62d35-bf77-41e2-bd36-13637fe41a01",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YkIgwTfChVa2TABv",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "817426798124728",
+        "recipientPhoneNumber": "+919335963562",
+        "textBody": "hrey",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        1408
+      ],
+      "id": "08fdefb7-59f1-4dec-8067-8708dec518f8",
+      "name": "Send message1",
+      "webhookId": "e74b6848-2dc1-481d-a785-d55ce55e4b3a",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "5RWVEg1QzddyMWlm",
+          "name": "WhatsApp account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "phoneNumberId": "=817426798124728",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        1408
+      ],
+      "id": "fd416ec0-2336-4602-ad49-5221eb0dea67",
+      "name": "Upload media",
+      "webhookId": "26f5c3ee-8c0b-4318-a2e1-c1b7e51ba1e2",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "5RWVEg1QzddyMWlm",
+          "name": "WhatsApp account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8",
+          "mode": "list",
+          "cachedResultName": "Astrology",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name ": "={{ $json.name }}",
+            "email id ": "={{ $json.email }}",
+            "phone no": "={{ $json.phone }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name ",
+              "displayName": "name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone no",
+              "displayName": "phone no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email id ",
+              "displayName": "email id ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "dob",
+              "displayName": "dob",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        352
+      ],
+      "id": "14d8dd20-6b0c-424d-b868-95c44ce19011",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pPX3arfpZqjrLmC2",
+          "name": "shreshth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node (JavaScript)\n * Input: `items` (what the webhook node provides)\n * Output: array of { json: { name, email, phone } }\n */\n\nconst output = [];\n\nfor (const item of items) {\n  try {\n    // The webhook body can come as:\n    // - item.json.body (stringified JSON) -> e.g. \"{\\\"name\\\":\\\"...\\\"}\"\n    // - item.json.body (already parsed object)\n    // - or in some cases the whole item.json is already the payload array/object\n    let payload = item.json.body ?? item.json;\n\n    // If payload is a string, try to parse it\n    if (typeof payload === 'string') {\n      payload = payload.trim();\n      // Sometimes payload is a JSON string that itself contains a JSON-string in \"body\"\n      // Try to parse repeatedly up to 2 times (safe guard)\n      try {\n        payload = JSON.parse(payload);\n      } catch (e) {\n        // leave as string if parse fails\n      }\n    }\n\n    // Handle case where payload is an array like the one you pasted:\n    // [ { ..., body: \"{\\\"name\\\":\\\"...\\\"}\" } ]\n    if (Array.isArray(payload) && payload.length > 0) {\n      // prefer first element that has a body\n      const first = payload[0];\n      if (first && first.body) {\n        let inner = first.body;\n        if (typeof inner === 'string') {\n          inner = inner.trim();\n          try { inner = JSON.parse(inner); } catch (e) {}\n        }\n        payload = inner;\n      } else {\n        // fallback to first element if it already is the object we want\n        payload = first;\n      }\n    }\n\n    // If payload still has a `body` property (common pattern), unwrap it\n    if (payload && payload.body && typeof payload.body !== 'object') {\n      try {\n        payload.body = JSON.parse(payload.body);\n      } catch (e) {}\n    }\n    if (payload && payload.body && typeof payload.body === 'object' && (payload.body.name || payload.body.email || payload.body.phone)) {\n      payload = payload.body;\n    }\n\n    // Finally, pick fields (defensive defaults)\n    const name = (payload && payload.name) ? String(payload.name) : '';\n    const email = (payload && payload.email) ? String(payload.email) : '';\n    const phone = (payload && payload.phone) ? String(payload.phone) : '';\n\n    output.push({ json: { name, email, phone } });\n  } catch (err) {\n    // On error, output an empty row with error message (helps debugging in n8n)\n    output.push({ json: { name: '', email: '', phone: '', _error: err.message } });\n  }\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        352
+      ],
+      "id": "7762dcb5-f4f9-4e1a-970f-d31010ff66ea",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "payment",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        1536,
+        368
+      ],
+      "id": "4166fd17-eae6-43ce-8425-540e3fa87cb6",
+      "name": "payment",
+      "webhookId": "0ae01f7d-7916-48b2-879e-8363d40fe178"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        384,
+        352
+      ],
+      "id": "0888c2b0-6c6a-44a5-9ec3-f7447b763ba3",
+      "name": "lead",
+      "webhookId": "0060af54-8c83-47f7-a47d-ebea32f8647f"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8",
+          "mode": "list",
+          "cachedResultName": "Astrology",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1786301450,
+          "mode": "list",
+          "cachedResultName": "Clients",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit#gid=1786301450"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        784,
+        1680
+      ],
+      "id": "6f6d8754-a260-4661-8da4-be6c9b5ff0d3",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pPX3arfpZqjrLmC2",
+          "name": "shreshth"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "Calling"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        96,
+        560
+      ],
+      "typeVersion": 1,
+      "id": "0faa8c25-a8a0-4419-a29d-16315fde3d7b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Lead collection"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        96,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "e6c85489-952a-4104-877e-7d001e6bd230",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "payment"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1248,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "cc22fdef-6a12-435d-bed6-81e58a000591",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['email id '] }}",
+        "subject": "A personalized astrology report to guide your next big move - Divya Drishti",
+        "emailType": "text",
+        "message": "=Hi {{ $json['name '] }},\n\nIf you’re looking for clear, practical insight into your career, relationships, and timing for important decisions, our Full Natal Report (जन्म कुंडली रिपोर्ट) + Online Horoscope (राशिफल) gives you a complete, personalized roadmap — all delivered digitally.\n\nUsing your birth details (date, time, place), our expert astrologers create a detailed जन्म कुंडली and a simple, easy-to-understand राशिफल, filled with guidance you can actually use in your daily life. No offline meetings or phone calls — everything is prepared and shared online with complete privacy. \n\nYour full report will be ready within 1 hours once you share your details. It’s secure, insightful, and designed to help you make decisions with confidence and clarity.\n\nStart here: https://divyadrishtii.lovable.app/\n\nWarm regards,\nSanjeev Verma\nDivya Drishti\n+919079636515",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        976
+      ],
+      "id": "c4245c08-93a1-4434-a35e-93bb5b46860f",
+      "name": "Send a message",
+      "webhookId": "011ae234-117d-4834-ae81-f3a5c6488b0e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rZ8aeKxY5gtbPU59",
+          "name": "shreshth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8",
+          "mode": "list",
+          "cachedResultName": "Astrology",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1786301450,
+          "mode": "list",
+          "cachedResultName": "Clients",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit#gid=1786301450"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        528
+      ],
+      "id": "43b4548d-9858-4448-95ca-1bedfed5beb2",
+      "name": "Google Sheets Trigger1",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "rT5CuclEaEhDlLdc",
+          "name": "shreshth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Google Sheets Trigger1').item.json.Gmail }}",
+        "subject": "Your Personalized Horoscope Report is Ready 🌟 - Divya Drishti",
+        "message": "=<!doctype html>\n<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <title>Your Horoscope Report</title>\n  <style>\n    body, table, td, a { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }\n    table, td { mso-table-lspace:0pt; mso-table-rspace:0pt; }\n    img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; display:block; }\n    body { margin:0; padding:0; width:100% !important; background-color:#f7f3ea; }\n    @media screen and (max-width:600px){\n      .container{ width:100% !important; }\n      .px{ padding-left:16px !important; padding-right:16px !important; }\n    }\n  </style>\n  <!--[if mso]>\n  <style type=\"text/css\">\n    .serif { font-family: Georgia, \"Times New Roman\", Times, serif !important; }\n    .sans { font-family: Arial, sans-serif !important; }\n  </style>\n  <![endif]-->\n</head>\n<body>\n  <center style=\"width:100%; background-color:#f7f3ea;\">\n    <div style=\"display:none; max-height:0; overflow:hidden; opacity:0;\">\n      Your personalized जन्म कुंडली (Natal Report) & राशिफल (Horoscope)—delivered online with a Vedic, premium touch.\n    </div>\n\n    <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" align=\"center\" width=\"100%\" style=\"max-width:680px; margin:0 auto;\" class=\"container\">\n      <tr>\n        <td style=\"padding:28px 20px;\">\n          <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" \n                 style=\"background:#ffffff; border-radius:14px; border:1px solid #e7dcc3;\">\n            <tr>\n              <td style=\"height:6px; background:#5b0a1e; border-top-left-radius:14px; border-top-right-radius:14px;\"></td>\n            </tr>\n\n            <!-- Logo -->\n            <tr>\n              <td align=\"center\" style=\"padding:22px 24px 6px 24px;\">\n                <a href=\"https://ibb.co/Mx8n5srQ\" style=\"text-decoration:none;\">\n                  <img src=\"https://i.ibb.co/5gYTx6mw/logo4bg.png\" width=\"160\" alt=\"Company Logo\" style=\"max-width:160px; height:auto;\">\n                </a>\n              </td>\n            </tr>\n\n            <!-- Decorative divider -->\n            <tr>\n              <td align=\"center\" style=\"padding:10px 24px 0 24px;\">\n                <span style=\"display:inline-block; font-family:Arial, Helvetica, sans-serif; font-size:12px; letter-spacing:6px; color:#c9a227;\">\n                  ✦ ✦ ✦\n                </span>\n              </td>\n            </tr>\n\n            <!-- Title -->\n            <tr>\n              <td class=\"px\" style=\"padding:18px 28px 0 28px;\">\n                <h1 class=\"serif\" style=\"margin:0; font-family:Georgia, 'Times New Roman', Times, serif; font-size:24px; line-height:32px; color:#1c1b1a; font-weight:700;\">\n                  Your Personalized Horoscope Report is Ready\n                </h1>\n                <p style=\"margin:8px 0 0 0; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:18px; color:#8a6b2c;\">\n                  Namaste ✨\n                </p>\n              </td>\n            </tr>\n\n            <!-- Body -->\n            <tr>\n              <td class=\"px\" style=\"padding:14px 28px 0 28px;\">\n                <p style=\"margin:0 0 12px 0; font-family:Arial, Helvetica, sans-serif; font-size:16px; line-height:26px; color:#3a2f26;\">\n                  Hi <strong>{{ $('Google Sheets Trigger1').item.json['name '] }}</strong>,\n                </p>\n\n                <p style=\"margin:0 0 14px 0; font-family:Arial, Helvetica, sans-serif; font-size:16px; line-height:26px; color:#3a2f26;\">\n                  We’re honored to share your <strong>जन्म कुंडली (Natal Report)</strong> and <strong>राशिफल (Horoscope)</strong>, prepared with a traditional Vedic lens and delivered with modern clarity. \n                  Inside, you’ll find practical guidance on strengths, life rhythms (दशा/गोचर), favorable periods, and remedies—explained simply, with a focus on solutions you can apply right away.\n                </p>\n\n                <p style=\"margin:0 0 16px 0; font-family:Arial, Helvetica, sans-serif; font-size:16px; line-height:26px; color:#3a2f26;\">\n                  <strong style=\"color:#5b0a1e;\">Attached:</strong> Your complete <strong>Kundali PDF</strong> (full report). You can view and save it directly—no calls or offline visits needed.\n                </p>\n\n                <!-- Short guidance list -->\n                <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\" style=\"margin:0 0 16px 0;\">\n                  <tr>\n                    <td style=\"padding:0;\">\n                      <p style=\"margin:0; font-family:Arial, Helvetica, sans-serif; font-size:15px; line-height:24px; color:#4a3f32;\">\n                        <strong>How to use your report:</strong>\n                        <br>• Start with the <em>Personality & Strengths</em> section to understand core traits.\n                        <br>• Review <em>Career, Relationships & Health</em> for near-term decisions.\n                        <br>• Check the <em>Timing/Transit</em> section for upcoming favorable windows.\n                        <br>• Note recommended <em>remedies</em> (mantra, fasts, gemstones) and follow consistently.\n                      </p>\n                    </td>\n                  </tr>\n                </table>\n\n                <p style=\"margin:0 0 18px 0; font-family:Arial, Helvetica, sans-serif; font-size:16px; line-height:26px; color:#3a2f26;\">\n                  If you’d like <strong>personal consultation</strong> to discuss career, marriage, health, or specific questions, feel free to reply to this email or contact us at the number below. We’ll guide you one-to-one with clear, actionable steps.\n                </p>\n              </td>\n            </tr>\n\n            <!-- Button -->\n            <tr>\n              <td class=\"px\" style=\"padding:0 28px 12px 28px;\">\n                <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" align=\"left\">\n                  <tr>\n                    <td bgcolor=\"#c9a227\" style=\"border-radius:10px; border:1px solid #b7941f;\">\n                      <a href=\"{{ $json.pdf_url }}\" \n                         style=\"display:inline-block; padding:14px 24px; font-family:Arial, Helvetica, sans-serif; font-size:15px; color:#1c1b1a; text-decoration:none; font-weight:700;\">\n                        View Report Online\n                      </a>\n                    </td>\n                  </tr>\n                </table>\n              </td>\n            </tr>\n\n            <!-- Note -->\n            <tr>\n              <td class=\"px\" style=\"padding:4px 28px 22px 28px;\">\n                <p style=\"margin:12px 0 0 0; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:22px; color:#6b5b46;\">\n                  May this knowledge bring clarity, confidence, and calm to your next steps.\n                </p>\n              </td>\n            </tr>\n\n            <!-- Decorative divider -->\n            <tr>\n              <td align=\"center\" style=\"padding:0 24px 6px 24px;\">\n                <span style=\"display:inline-block; font-family:Arial, Helvetica, sans-serif; font-size:12px; letter-spacing:6px; color:#c9a227;\">\n                  ✦ ✦ ✦\n                </span>\n              </td>\n            </tr>\n\n            <!-- Footer -->\n            <tr>\n              <td style=\"padding:18px 28px 24px 28px; background:#fbf7ed; border-bottom-left-radius:14px; border-bottom-right-radius:14px; border-top:1px solid #e7dcc3;\">\n                <p style=\"margin:0 0 8px 0; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#4a3f32;\">\n                  With blessings,\n                </p>\n                <p class=\"serif\" style=\"margin:0 0 6px 0; font-family:Georgia, 'Times New Roman', Times, serif; font-size:16px; color:#1c1b1a;\">\n                  <strong>Sanjeev Verma</strong>\n                </p>\n                <p style=\"margin:0; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#4a3f32;\">\n                  <strong>Divya Drishti</strong><br>\n                  <a href=\"https://divyadrishtii.lovable.app/\" style=\"color:#5b0a1e; text-decoration:none;\">divyadrishti.com</a> &nbsp;|&nbsp; \n                  <span style=\"color:#5b0a1e;\">+91&nbsp;90796&nbsp;36515</span>\n                </p>\n              </td>\n            </tr>\n          </table>\n          <!-- /Card -->\n        </td>\n      </tr>\n    </table>\n  </center>\n</body>\n</html>\n",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "=Your kundali"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1776,
+        768
+      ],
+      "id": "15520007-ac16-495c-8a6e-48960398f03e",
+      "name": "Send a message1",
+      "webhookId": "fd256905-bbe5-4ea2-b52e-938747dc9c1f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rZ8aeKxY5gtbPU59",
+          "name": "shreshth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://pdf.astrologyapi.com/v1/mini_horoscope_pdf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "authorization",
+              "value": "Basic NjQ1OTI0OjUxM2U2MzhiNTNmNzk5MGQ1YzVjMzQ1NTdjMzVmZTgyMWFjMmI0Yzg="
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json['name '] }}"
+            },
+            {
+              "name": "gender",
+              "value": "={{ $json.gender }}"
+            },
+            {
+              "name": "day",
+              "value": "={{ $json.day }}"
+            },
+            {
+              "name": "month",
+              "value": "={{ $json.month }}"
+            },
+            {
+              "name": "year",
+              "value": "={{ $json.year }}"
+            },
+            {
+              "name": "hour",
+              "value": "={{ $json['hour '] }}"
+            },
+            {
+              "name": "min",
+              "value": "={{ $json.min }}"
+            },
+            {
+              "name": "lat",
+              "value": "={{ $json.latitude }}"
+            },
+            {
+              "name": "lon",
+              "value": "={{ $json.longitude }}"
+            },
+            {
+              "name": "language",
+              "value": "={{ $json['language '] }}"
+            },
+            {
+              "name": "tzone",
+              "value": "5.5"
+            },
+            {
+              "name": "place",
+              "value": "={{ $json.place }}"
+            },
+            {
+              "name": "chart_style",
+              "value": "NORTH_INDIAN"
+            },
+            {
+              "name": "footer_link",
+              "value": "divyadrishti.com "
+            },
+            {
+              "name": "logo_url",
+              "value": "https://ibb.co/Mx8n5srQ"
+            },
+            {
+              "name": "company_name",
+              "value": "Divya Drishti "
+            },
+            {
+              "name": "company_info",
+              "value": "Divya Drishti offers personalized astrological readings and reports for your spiritual guidance."
+            },
+            {
+              "name": "domain_url",
+              "value": "https://divyadrishtii.lovable.app"
+            },
+            {
+              "name": "company_email",
+              "value": "sanjeev6833@gmail.com "
+            },
+            {
+              "name": "company_landline",
+              "value": "+91 90796 36515"
+            },
+            {
+              "name": "company_mobile",
+              "value": "+91 90796 36515"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2048,
+        544
+      ],
+      "id": "b2a26f74-68fb-42c6-a1ba-fd6d473941e1",
+      "name": "horoscope"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.pdf_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "=Your kundali"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1584,
+        768
+      ],
+      "id": "144585c7-8818-4f08-a916-4572d86bc3b0",
+      "name": "download"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8",
+          "mode": "list",
+          "cachedResultName": "Astrology",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1786301450,
+          "mode": "list",
+          "cachedResultName": "Clients",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit#gid=1786301450"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sent": "yes",
+            "phone no": "={{ $('Google Sheets Trigger1').item.json['phone no'] }}",
+            "Pdf": "={{ $('download').item.json.pdf_url }}",
+            "date and time": "="
+          },
+          "matchingColumns": [
+            "phone no"
+          ],
+          "schema": [
+            {
+              "id": "name ",
+              "displayName": "name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gmail",
+              "displayName": "Gmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone no",
+              "displayName": "phone no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "gender",
+              "displayName": "gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "day",
+              "displayName": "day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "month",
+              "displayName": "month",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "year",
+              "displayName": "year",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hour ",
+              "displayName": "hour ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "min",
+              "displayName": "min",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "latitude",
+              "displayName": "latitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "longitude",
+              "displayName": "longitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "language ",
+              "displayName": "language ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timezone",
+              "displayName": "timezone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "place",
+              "displayName": "place",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sent",
+              "displayName": "sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment plan",
+              "displayName": "payment plan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Pdf",
+              "displayName": "Pdf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date and time",
+              "displayName": "date and time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "zodiacName",
+              "displayName": "zodiacName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2048,
+        768
+      ],
+      "id": "a9c1184f-37c9-4aac-b482-545cf126250f",
+      "name": "final update",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pPX3arfpZqjrLmC2",
+          "name": "shreshth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8",
+          "mode": "list",
+          "cachedResultName": "Astrology",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1786301450,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-fM93p0pPfcGW2fIHV8ljiqsnLMuXkGQqXTQqYEuLt8/edit#gid=1786301450"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name ": "={{ $json.body.name }}",
+            "phone no": "={{ $json.body.phone }}",
+            "gender": "={{ $json.body.gender }}",
+            "day": "={{ $json.body.day }}",
+            "month": "={{ $json.body.month }}",
+            "year": "={{ $json.body.year }}",
+            "hour ": "={{ $json.body.hour }}",
+            "min": "={{ $json.body.min }}",
+            "latitude": "={{ $json.body.latitude }}",
+            "longitude": "={{ $json.body.longitude }}",
+            "language ": "en",
+            "timezone": "5.5",
+            "zodiacName": "={{ $json.body.zodiacName }}",
+            "place": "={{ $json.body.place }}",
+            "Gmail": "={{ $json.body.email }}",
+            "payment plan": "={{ $json.body.amount }}",
+            "date and time": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "phone no"
+          ],
+          "schema": [
+            {
+              "id": "name ",
+              "displayName": "name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gmail",
+              "displayName": "Gmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone no",
+              "displayName": "phone no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "gender",
+              "displayName": "gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "day",
+              "displayName": "day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "month",
+              "displayName": "month",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "year",
+              "displayName": "year",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hour ",
+              "displayName": "hour ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "min",
+              "displayName": "min",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "latitude",
+              "displayName": "latitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "longitude",
+              "displayName": "longitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "language ",
+              "displayName": "language ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timezone",
+              "displayName": "timezone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "place",
+              "displayName": "place",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sent",
+              "displayName": "sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment plan",
+              "displayName": "payment plan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Pdf",
+              "displayName": "Pdf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date and time",
+              "displayName": "date and time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "zodiacName",
+              "displayName": "zodiacName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1760,
+        368
+      ],
+      "id": "f677694c-2ba5-4e1f-8e2f-cb64ad26db73",
+      "name": "payment update",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pPX3arfpZqjrLmC2",
+          "name": "shreshth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a476b77e-2cf2-4d4e-be0a-03856a2082a9",
+              "leftValue": "={{ $json.sent }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        528
+      ],
+      "id": "27dfa300-c241-4326-b175-4474b8be22ee",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        2640,
+        784
+      ],
+      "id": "2d247110-eaf2-429e-ae07-ac74627e678c",
+      "name": "Send message",
+      "webhookId": "ab82bf27-a38c-4503-93b5-922d19dee7c5",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "5RWVEg1QzddyMWlm",
+          "name": "WhatsApp account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1968,
+        368
+      ],
+      "id": "6ee09835-5656-41c8-82d4-529ce311152d",
+      "name": "Send a message2",
+      "webhookId": "8e835096-d445-474c-b966-452afa8224af",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rZ8aeKxY5gtbPU59",
+          "name": "shreshth"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calling Agent": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Calling Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message1": {
+      "main": [
+        [
+          {
+            "node": "Upload media",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "payment": {
+      "main": [
+        [
+          {
+            "node": "payment update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lead": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "final update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "horoscope": {
+      "main": [
+        [
+          {
+            "node": "download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "download": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "final update": {
+      "main": [
+        []
+      ]
+    },
+    "If1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "horoscope",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "payment update": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "17d23e01-b740-40c5-80b9-f90d7c739868",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "61022de16dcee1378ae8debe3823fe43c4537e0a1abc1d42fe044283ad5823c9"
+  },
+  "id": "cbowdyTtKN1xFbRi",
+  "tags": [
+    {
+      "updatedAt": "2025-11-06T16:54:55.546Z",
+      "createdAt": "2025-11-06T16:54:55.546Z",
+      "id": "HMFRAlKpQgluNSQC",
+      "name": "inbound"
+    },
+    {
+      "updatedAt": "2025-11-06T16:54:55.508Z",
+      "createdAt": "2025-11-06T16:54:55.508Z",
+      "id": "IFS4KVJYK5Fwt2zS",
+      "name": "outbound"
+    }
+  ]
+}
