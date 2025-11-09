@@ -1,0 +1,508 @@
+{
+  "name": "Voice calling Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "959d034b-c024-4659-b93f-76e828b6f2a1",
+              "leftValue": "={{ $json.called }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1632,
+        -656
+      ],
+      "id": "fa6fde0d-3bc1-4a15-bb83-c7e4dea9f988",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1kLfeRAtB_54VQk5GIsyyebIumKJwHAE5XGtmKWkJqzM",
+          "mode": "list",
+          "cachedResultName": "ANN global Voice agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kLfeRAtB_54VQk5GIsyyebIumKJwHAE5XGtmKWkJqzM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kLfeRAtB_54VQk5GIsyyebIumKJwHAE5XGtmKWkJqzM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "={{ $json.status }}",
+            "City": "={{ $json.location }}",
+            "Do you require a home loan": "={{ $json.home_loan }}",
+            "contact_number": "={{ $json.Number }}",
+            "EMail": "={{ $json.Email }}",
+            "full Name ": "={{ $json.lead_name }}",
+            "Summary": "={{ $json.short_summary }}",
+            "Property type": "={{ $json.property_type }}",
+            "Purchase Timeline": "={{ $json.purchase_timeline }}",
+            "row_number": 0,
+            "Budget": "={{ $json.budget }}",
+            "called": "={{ $json.called }}"
+          },
+          "matchingColumns": [
+            "EMail"
+          ],
+          "schema": [
+            {
+              "id": "Do you require a home loan",
+              "displayName": "Do you require a home loan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "full Name ",
+              "displayName": "full Name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "contact_number",
+              "displayName": "contact_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "EMail",
+              "displayName": "EMail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Property type",
+              "displayName": "Property type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Purchase Timeline",
+              "displayName": "Purchase Timeline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "called",
+              "displayName": "called",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1648,
+        -464
+      ],
+      "id": "ada84cb0-a35c-4757-8082-61fe6a6c1a60",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZieEbyEwWBEUm3uD",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nfor (const item of items) {\n  let payload = item.json;\n\n  \n  if (typeof payload === 'string') {\n    try {\n      payload = JSON.parse(payload);\n    } catch (err) {\n      \n    }\n  }\n\n \n  const extracted = payload.extracted_data || payload.extractedData || payload.data || payload || {};\n  const context = payload.context_details || {};\n  const recipient = context.recipient_data || {};\n\n \n  const id = extracted.id || payload.id || null;\n  const call_id = extracted.call_id || extracted.callId || payload.call_id || null;\n\n  // Fields\n  const status = extracted.status || payload.status || null;\n  const short_summary = extracted.summary || payload.summary || null;\n  const lead_name =\n    extracted.lead_name ||\n    extracted.leadName ||\n    payload.lead_name ||\n    payload.leadName ||\n    recipient.Name ||\n    null;\n  const property_type =\n    extracted.property_type ||\n    extracted.propertyType ||\n    payload.property_type ||\n    null;\n  const purchase_timeline =\n    extracted.purchase_timeline ||\n    extracted.purchaseTimeline ||\n    payload.purchase_timeline ||\n    null;\n  const budget = extracted.budget || payload.budget || null;\n  const location = extracted.location || payload.location || null;\n  const home_loan = extracted.home_loan || payload.home_loan || null;\n  const follow_up_date =\n    extracted.follow_up_date || payload.follow_up_date || null;\n\n  // Contact info\n  const Number = recipient.Number || context.recipient_phone_number || null;\n  const Email =\n    recipient[\"Email id\"] || recipient.Email || recipient.email || null;\n\n  // Outer summary\n  const full_summary = payload.full_summary || payload.summary || null;\n\n  output.push({\n    json: {\n      id,\n      call_id,\n      status,\n      budget,\n      lead_name,\n      property_type,\n      purchase_timeline,\n      Number,\n      Email,\n      location,\n      home_loan,\n      follow_up_date,\n      short_summary,\n      full_summary,\n      called: \"Yes\",  \n    },\n  });\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2064,
+        -448
+      ],
+      "id": "955b1644-a3a6-4bda-b0e3-d60bee63e755",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.bolna.ai/executions/{{ $json.execution_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer bn-2b63441eab91492da88690f35345a9c5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2304,
+        -656
+      ],
+      "id": "0f2f15c4-4afa-407b-8cdf-0b01106a6c01",
+      "name": "Summary"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.bolna.ai/call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer bn-2b63441eab91492da88690f35345a9c5"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"agent_id\": \"2786b819-2c42-40f1-a31b-3845ecff4c5c\",\n  \"recipient_phone_number\": \"+{{ $json.contact_number }}\",\n  \"from_phone_number\": \"+918035317801\",\n  \"user_data\": {\n    \"Name\": \"{{ $json['full Name '] }}\",\n\"Email id\":\"{{ $json.EMail }}\",\n    \"Requirement\": \"\",\n\"Number\": \"+{{ $json.contact_number }}\" \n\n    \n  }\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1856,
+        -656
+      ],
+      "id": "ce5352bd-cadd-4e45-831c-ff5e108d5c93",
+      "name": "Calling Agent"
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2080,
+        -656
+      ],
+      "id": "ae515ebb-d4df-4c13-a283-c1e6dcb8105f",
+      "name": "Wait",
+      "webhookId": "3a20186a-7039-4656-a898-1b258465431e"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1kLfeRAtB_54VQk5GIsyyebIumKJwHAE5XGtmKWkJqzM",
+          "mode": "list",
+          "cachedResultName": "ANN global Voice agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kLfeRAtB_54VQk5GIsyyebIumKJwHAE5XGtmKWkJqzM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kLfeRAtB_54VQk5GIsyyebIumKJwHAE5XGtmKWkJqzM/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        -912
+      ],
+      "id": "7ee2ad5a-cc6c-4210-98f9-0280e74a6e88",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "vLE4YBjGkZglX6fW",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        -592
+      ],
+      "id": "100356c2-4826-40f2-9f14-07826b2ea729",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kLfeRAtB_54VQk5GIsyyebIumKJwHAE5XGtmKWkJqzM",
+          "mode": "list",
+          "cachedResultName": "ANN global Voice agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kLfeRAtB_54VQk5GIsyyebIumKJwHAE5XGtmKWkJqzM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kLfeRAtB_54VQk5GIsyyebIumKJwHAE5XGtmKWkJqzM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1632,
+        -912
+      ],
+      "id": "47a07042-558e-4afd-af8d-4b0e4fce6243",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZieEbyEwWBEUm3uD",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Calling Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calling Agent": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "da8044a5-0627-4101-9fb6-9943c4065e35",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e8b025a78161c108287ec5b5cae3efefc1f5eadc694dbc89d07372cd161a39e1"
+  },
+  "id": "ApBXAgtvb1DJ0fSw",
+  "tags": [
+    {
+      "createdAt": "2025-09-06T17:39:04.477Z",
+      "updatedAt": "2025-09-06T17:39:04.477Z",
+      "id": "LdKWBj6TB8Uno5QI",
+      "name": "inbound"
+    },
+    {
+      "createdAt": "2025-09-06T17:39:04.502Z",
+      "updatedAt": "2025-09-06T17:39:04.502Z",
+      "id": "oPYiZTWSFMOZro7p",
+      "name": "outbound"
+    }
+  ]
+}
